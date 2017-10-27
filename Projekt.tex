@@ -6,6 +6,15 @@
 \usepackage{url}
 \usepackage{float}
 
+
+\newcommand{\pictureframe}[2]{
+	\begin{figure}[H]
+		\begin{center}
+			\includegraphics[width=#1]{#2}
+		\end{center}
+	\end{figure}
+}
+
 \title{
 Założenia wstępne projektu\\
 \small{Rozproszone i obiektowe systemy baz danych}
@@ -16,9 +25,29 @@ Założenia wstępne projektu\\
 \begin{document}
 \maketitle
 \section{Temat i cel projektu}
+Temat: "Aplikacja do zarządzania kadrami wykorzystująca rozproszoną bazę danych"\\
+Cel projektu: projekt oraz implementacja aplikacji internetowej dla działu kadr w firmie branży IT
 \section{Opis działania i funkcje systemu}
+System pozwoli na dodawanie i usuwanie pracowników, przeglądanie i edycję danych osobowych pracowników i zależności hierarchicznych pomiędzy nimi. Ponadto system replikacji bazy danych pozwoli na obsługę systemu z różnych oddziałów firmy rozsianych po całym świecie.\\
+System będzie miał formę aplikacji internetowej z systemem logowania i będzie dostępny dla pracowników działu kadr. Konta użytkowników będą zakładane odgórnie przez administratora.
 \section{Założenia architektoniczne przyjęte podczas realizacji systemu}
+Aplikacja będzie wykorzystywała relacyjną bazę danych MySQL oraz logikę biznesową zaimplementowaną z użyciem języka Java i biblioteki Spring Framework oraz pochodnych. Każda instancja aplikacji będzie posiadać własną bazę danych o takich samej zawartości i będzie dobierana na podstawie lokalizacji. Zastosowana będzie replikacja  migawkowa typu multimaster na poziomie bazy danych i będzie służyła propagacji danych pomiędzy różnymi instancjami tej samej aplikacji. Kontroli wersji danych będzie służyć mechanizm \textit{optimistic locking}. Instancja aplikacji, z którą łączyć się będzie użytkownik, będzie dobierana na podstawie lokalizacji użytkownika.
 \section{Wykorzystywane narzędzia, technologie projektowania oraz implementacji systemu}
-\section{Struktura systemu i projekt komunikacji}
+\begin{itemize}
+	\item Java 8, Spring Framework
+	\item MySQL 5.7.10
+	\item HTML 5
+	\item CSS 3
+	\item \LaTeX
+	\item Visual Paradigm
+	\item IntelliJ IDEA
+\end{itemize}
+\section{Schemat komunikacji, struktura systemu}
+\pictureframe{15cm}{Schemat.png}
 \section{Literatura}
+\begin{enumerate}
+	\item \url{https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-replication-multi-master.html}
+	\item \url{https://docs.spring.io/spring/docs/5.0.1.RELEASE/spring-framework-reference/core.html#spring-core}
+	\item \url{http://docs.spring.io/spring-data/jpa/docs/1.10.4.RELEASE/reference/html/}
+\end{enumerate}
 \end{document}
