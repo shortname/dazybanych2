@@ -1,8 +1,3 @@
-INSERT INTO city (id, name) VALUES (1, 'Wrocław');
-INSERT INTO city (id, name) VALUES (2, 'Wałbrzych');
-INSERT INTO city (id, name) VALUES (3, 'Poznań');
-INSERT INTO city (id, name) VALUES (4, 'Sosnowiec');
-
 insert into department (id, name) values (1, 'R&D');
 insert into department (id, name) values (2, 'HR');
 insert into personal_data (id, address, birthday, name, surname) values (1, 'Łyczakowska 7, 00-150 Kraków', '1990-10-10', 'Jan', 'Kowalski');
@@ -25,9 +20,9 @@ insert into leader (id, employee_id) values (2,2);
 insert into project (id, name, leader_id) values (1, 'ABC', 1);
 insert into project (id, name, leader_id) values (2, 'TTF', 2);
 insert into project (id, name, leader_id) values (3, 'OaM', 2);
-insert into project_employees (project_id, employees_id) values (1,1);
-insert into project_employees (project_id, employees_id) values (1,2);
-insert into project_employees (project_id, employees_id) values (1,3);
-insert into project_employees (project_id, employees_id) values (3,4);
-insert into project_employees (project_id, employees_id) values (2,5);
-insert into project_employees (project_id, employees_id) values (2,4);
+insert into project_employee (project_id, employee_id) values (1,1);
+insert into project_employee (project_id, employee_id) values (1,2);
+insert into project_employee (project_id, employee_id) values (1,3);
+insert into project_employee (project_id, employee_id) values (3,4);
+insert into project_employee (project_id, employee_id) values (2,5);
+insert into project_employee (project_id, employee_id) values (2,4);

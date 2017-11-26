@@ -1,6 +1,5 @@
 package hrs.rest.project;
 
-import hrs.database.city.City;
 import hrs.database.project.Project;
 import hrs.database.project.ProjectRepo;
 import org.springframework.beans.factory.annotation.Autowired;

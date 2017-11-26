@@ -27,7 +27,11 @@ public class Project {
 
     @NotNull
     @ManyToMany
-    @JoinTable
+    @JoinTable(name = "project_employee", joinColumns = {
+            @JoinColumn(name = "project_id")
+    }, inverseJoinColumns = {
+            @JoinColumn(name = "employee_id")
+    })
     private Collection<Employee> employees;
 
 }
