@@ -17,25 +17,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @ComponentScan
 @EnableJpaRepositories
 @EnableAutoConfiguration
-public class City extends SpringBootServletInitializer{
+public class City{
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(City.class);
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer(){
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry
-                        .addMapping("/**")
-                        .allowedMethods(CorsConfiguration.ALL)
-                        .allowedOrigins(CorsConfiguration.ALL);
-            }
-        };
-    }
+//    @Override
+//    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+//        return application.sources(City.class);
+//    }
+//
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer(){
+//        return new WebMvcConfigurerAdapter() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry
+//                        .addMapping("/**")
+//                        .allowedMethods(CorsConfiguration.ALL)
+//                        .allowedOrigins(CorsConfiguration.ALL);
+//            }
+//        };
+//    }
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(City.class, args);
