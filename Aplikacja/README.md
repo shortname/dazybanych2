@@ -6,9 +6,11 @@
 
 3. Stwórz w MySQL bazę danych "hrs"
 
-4. Zainstaluj JDK w wersji dla Javy 8.x
+## Wersja dla linuxa
 
-5. Zainstaluj Mavena
+4. Zainstaluj JDK w wersji co najmniej 1.8 (sprawdź czy masz: javac -version)
+
+5. Zainstaluj Mavena (sprawdź czy masz: mvn -v)
 
 6. Uruchom skrypt compile.sh
 
