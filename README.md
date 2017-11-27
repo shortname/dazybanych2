@@ -14,12 +14,10 @@
 
 6. Wejdź do folderu Aplikacja
 
-6. Uruchom skrypt compile.sh
-
-7. Uruchom skrypt run.sh (Nie zamykaj procesu!)
+7. Uruchom skrypt start.sh (Nie zamykaj procesu!)
 
 8. Wejdź w przeglądarce na stronę [http://localhost:8080](http://localhost:8080). Powinieneś zobaczyć JSONa z danymi.
 
 ### Wersja dla Windowsa (NIEZWERYFIKOWANA!)
 
-Przeprowadź to samo, co dla linuxa, tylko komendy ze skryptów shellowych wykonaj ręcznie (ewentualnie skopiuj te skrypty z rozszerzeniem ".bat" i uruchom).
+Przeprowadź to samo, co dla linuxa, tylko komendy ze skryptów shellowych: compile.sh, a potem run.sh wykonaj ręcznie (ewentualnie skopiuj te skrypty z rozszerzeniem ".bat" i uruchom).
