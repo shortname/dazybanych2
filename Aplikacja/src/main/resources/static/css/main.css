@@ -1,0 +1,15 @@
+table{
+    width: 100%;
+}
+
+table tr td{
+    padding: 10px;
+}
+
+#address-filter, #name-filter, #specialization-filter {
+    width: 100%;
+}
+
+.logout-btn {
+    padding: 20px;
+}
