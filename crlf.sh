@@ -1,0 +1,1 @@
+for i in `git status -uno --short | tr -s " " | rev | cut -d" " -f1 | rev`; do sed -bi 's/\r//g' $i; done
