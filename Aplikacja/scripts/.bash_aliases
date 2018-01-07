@@ -1,0 +1,6 @@
+alias dbstatus='systemctl status mysql'
+alias dbstart='sudo systemctl start mysql'
+alias dbstop='sudo systemctl stop mysql'
+alias app='cd ~/Desktop/dazybanych2-master/Aplikacja'
+alias dblog='vi /var/log/mysql/error.log'
+alias dbcnf='sudo vi /etc/mysql/my.cnf'
