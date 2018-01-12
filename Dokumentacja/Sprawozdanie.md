@@ -134,7 +134,7 @@ Kolejnym krokiem było konfiguracja maszyn wirtualnych w celu umożliwienia repl
 
 Poniżej widoczna jest tabela prezentująca bazy danych połączone w grupę replikacji:
 
-![Tabela prezentująca bazy danych połączone w grupę replikacji](./group.png)
+![Tabela prezentująca bazy danych połączone w grupę replikacji](./group.PNG)
 
 Prezentacja działania mechanizmu replikacji dostępna jest w formie wideo pod adresem: [https://youtu.be/CZzqGOR5zJk](https://youtu.be/CZzqGOR5zJk).
 
