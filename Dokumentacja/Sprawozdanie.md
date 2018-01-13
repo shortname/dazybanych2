@@ -146,6 +146,65 @@ Poniżej widoczna jest tabela prezentująca bazy danych połączone w grupę rep
 
 Prezentacja działania mechanizmu replikacji dostępna jest w formie wideo pod adresem: [https://youtu.be/CZzqGOR5zJk](https://youtu.be/CZzqGOR5zJk).
 
+### Schemat bazy danych
+
+Schemat bazy danych jest tworzony przez mechanizm HBM2DDL biblioteki Hibernate na podstawie klas encji aplikacji klienckiej. Aby było to możliwe należało skonfigurować aplikację z użyciem pliku application.properties.
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/hrs
+spring.datasource.username=root
+spring.datasource.password=admin
+spring.datasource.driverClassName=com.mysql.jdbc.Driver
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto = create
+spring.jpa.hibernate.naming.physical-strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+spring.jpa.properties.hibernate.hbm2ddl.import_files=import.sql
+```
+
+Po skonfigurowaniu aplikacji należało stworzyć klasy encji, a następnie uruchomić aplikację. Poniżej przedstawiono klasę encji reprezentującą tabelę *project*.
+
+```java
+package hrs.database.project;
+
+import hrs.database.employee.Employee;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+
+@Entity
+@Getter
+@Setter
+public class Project {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @NotNull
+    private String name;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn
+    private Leader leader;
+
+    @NotNull
+    @ManyToMany
+    @JoinTable(name = "project_employee", joinColumns = {
+            @JoinColumn(name = "project_id")
+    }, inverseJoinColumns = {
+            @JoinColumn(name = "employee_id")
+    })
+    private Collection<Employee> employees;
+
+}
+```
+
+Kolumny tabeli reprezentowane są przez pola klasy, natomiast ich typ definiuje typ zmiennej, a właściwości - adnotacje. Powyższa klasa zawiera też definicję tabeli łączącej *project_employee* zrealizowaną za pomocą adnotacji *@JoinTable*.
+
 ## Projekt i implementacja aplikacji klienckiej
 
 ### Funkcje aplikacji - diagram przypadków użycia
@@ -156,6 +215,161 @@ Aplikacja realizuje przypadki użycia przedstawione na diagramie. Zostały zaimp
 
 ### Realizacja wybranych funkcjonalności
 
+W ramach projektu zrealizowano część aplikacji odpowiedzialną za zarządzanie projektami, a więc przewidującą przypadki użycia: "dodaj projekt", "aktualizuj dane projektu" i "usuń projekt" i  ich nieodłączną część "wyszukaj projekt".
+
+####Wyszukiwanie projektu
+
+Jak pokazano na diagramie przypadków użycia nieodłączną częścią niektórych procesów jest wyszukiwanie projektu, które zostało zrealizowane z użyciem biblioteki Spring Data JPA.
+
+```java
+package hrs.database.project;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+
+public interface ProjectRepo extends JpaRepository<Project, Long> {
+
+    @Query("select new hrs.database.project.ProjectListDO(p.id, p.name, p.leader.employee.personalData.name, p.leader.employee.personalData.surname, count(e)) from Project p left join p.employees as e group by p.id, p.name")
+    List<ProjectListDO> findProjects();
+
+}
+```
+
+Wykonanie metody *findProjects* jest równoznaczne z wykonaniem zapytania JPQL podanego w adnotacji. Wartością zwracaną jest lista obiektów typu *ProjectListDO*.
+
+```java
+package hrs.database.project;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class ProjectListDO {
+
+    private Long id;
+
+    private String name;
+
+    private String leader;
+
+    private Long size;
+
+    public ProjectListDO(Long id, String name, String leaderName, String leaderSurname, Long size) {
+        this.id = id;
+        this.name = name;
+        this.leader = leaderName + ' ' + leaderSurname;
+        this.size = size;
+    }
+}
+```
+
+Następnie lista jest udostępniana użytkownikowi przez punkt dostępu typu REST zdefiniowany w metodzie *findProjects* klasy *ProjectListResource*.
+
+```java
+package hrs.rest.employee;
+
+import hrs.database.project.ProjectRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+@RequestMapping("/project")
+public class ProjectListResource {
+
+    @Autowired
+    private ProjectRepo projectRepo;
+
+    @RequestMapping
+    public String findProjects(Model model) {
+        model.addAttribute("projects", projectRepo.findProjects());
+        return "project-list";
+    }
+
+}
+```
+
+Wartością zwracaną metody jest nazwa szablonu strony internetowej, która ma zostać pokazana w przeglądarce w odpowiedzi na zapytanie metodą GET na adres *\<host\>/project*. Szablon zostanie wypełniony danymi przekazanymi jako atrybut modelu o nazwie *projects*. Za połączenie modelu i widoku odpowiada biblioteka Thymeleaf. W szablonie zastosowano także bibliotekę Bootstrap, dostarczającą gotowych komponentów.
+
+```html
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="utf-8"/>
+    <title>Registration</title>
+    <link th:href="@{~/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{~/css/main.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <a href="project/create" class="btn btn-success" role="button">Dodaj projekt</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table-striped">
+                <thead>
+                <th>Nazwa</th>
+                <th>Kierownik</th>
+                <th>Liczba pracowników</th>
+                <th></th>
+                <th></th>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${projects}">
+                    <td th:text="${project.name}"></td>
+                    <td th:text="${project.leader}"></td>
+                    <td th:text="${project.size}"></td>
+                    <td>
+                        <a th:href="'project/edit?id=' + ${project.id}" class="btn btn-info" role="button">Edytuj</a>
+                    </td>
+                    <td>
+                        <a th:href="'project/remove?id=' + ${project.id}" class="btn btn-danger" role="button">Usuń</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script th:src="@{~/jquery/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{~/bootstrap/js/bootstrap.min.js}"></script>
+</div>
+</body>
+</html>
+```
+
+Po otwarciu adresu [http://localhost:8080/project](http://localhost:8080/project) można przeglądać listę projektów.
+
+![Widok listy projektów](Lista.PNG)
+
+####Usuwanie projektów
+
+Jak można zauważyć w kodzie szablonu naciśnięcie przycisku *Usuń* wywoła wysłanie zapytania typu GET na adres *\<host\>/project?remove=\<id\>*, gdzie *id* zostanie zastąpione odpowiednią wartością. Aby możliwe było odebranie zapytania, należało zdefiniować w klasie *ProjectListResource* kolejny punkt dostępu, reprezentowany metodą *remove*.
+
+```java
+@RequestMapping("/remove")
+public String removeProject(@RequestParam("id") Long id){
+  projectRepo.delete(id);
+  return "redirect:/project";
+}
+```
+
+Metoda przyjmuje id jako parametr i usuwa z bazy odpowiedni rekord z pomocą metody *delete* zdefiniowanej w klasie *ProjectRepo* przez interfejs *JpaRepository* pochodzący z biblioteki Spring Data JPA. Nie trzeba więc tworzyć zapytania samodzielnie. Po wykonaniu usuwania aplikacja przekierowuje na adres *\<host\>/project*, gdzie użytkownik może zobaczyć zaktualizowaną listę projektów.
+
+####Edytowanie danych projektu
+
+Aby możliwe było edytowanie danych projektu należało stworzyć nowy szablon definiujący odpowiedni formularz.
+
 ## Wdrożenie i testowanie aplikacji
 
 ## Podsumowanie
@@ -163,6 +377,11 @@ Aplikacja realizuje przypadki użycia przedstawione na diagramie. Zostały zaimp
 ## Literatura
 
 - Wrycza S. i in., *Język UML 2.0 w modelowaniu systemów informatycznych*, Helion, Gliwice 2005, s. 33-50
-- https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-replication-multi-master.html
-- https://docs.spring.io/spring/docs/5.0.1.RELEASE/spring-framework-reference/core.html#spring-core
-- http://docs.spring.io/spring-data/jpa/docs/1.10.4.RELEASE/reference/html/
+
+- [https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-replication-multi-master.html](https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-replication-multi-master.html)​
+
+- [https://docs.spring.io/spring/docs/5.0.1.RELEASE/spring-framework-reference/core.html#spring-core](https://docs.spring.io/spring/docs/5.0.1.RELEASE/spring-framework-reference/core.html#spring-core)
+
+- [http://docs.spring.io/spring-data/jpa/docs/1.10.4.RELEASE/reference/html/](http://docs.spring.io/spring-data/jpa/docs/1.10.4.RELEASE/reference/html/)
+
+- [https://www.visual-paradigm.com/support/documents/vpuserguide/3563/3564/85378_conceptual,l.html](https://www.visual-paradigm.com/support/documents/vpuserguide/3563/3564/85378_conceptual,l.html)

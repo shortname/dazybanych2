@@ -1,1 +1,0 @@
-mysql -u root -p < other-host.sql
