@@ -18,11 +18,19 @@ Aplikacja wykorzystuje relacyjną bazę danych MySQL oraz logikę biznesową zai
 
 ## Replikacja w systemie baz danych MySQL
 
-## Model konceptualny i fizyczny baz danych
+## Modele baz danych
 
 ### Model konceptualny
 
-![Diagram ERD](erd.jpg)
+![Model konceptualny](Conceptual ERD.jpg)
+
+### Model logiczny
+
+![Model logiczny](Logical ERD.jpg)
+
+### Model fizyczny
+
+![Model fizyczny](Physical ERD.jpg)
 
 ## Implementacja baz danych w środowisku MySQL
 
