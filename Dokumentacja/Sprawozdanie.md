@@ -40,7 +40,7 @@ Implementację mechanizmu replikacyjnego rozpoczęto od przygotowania odpowiedni
 
 #### Przygotowanie środowiska
 
-1. Instalacja VMware Workstation 14 Player na urządzeniu - hoscie z systemem Windows
+1. Instalacja VMware Workstation 14 Player na urządzeniu - hoście z systemem Windows
 2. Instalacja maszyny wirtualnej z systemem Ubuntu 16.04 LTS
 3. Instalacja najnowszej wersji MySQL.
 4. Powielenie maszyny wirtualnej, tak aby otrzymać łącznie 3 maszyny.
@@ -401,7 +401,7 @@ Aby możliwe było edytowanie danych projektu należało stworzyć nowy szablon 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="leaderCandidateId">Kierownik*:</label>
                     <div class="col-sm-10">
-                        <select name="leaderCandidateId" id="leaderCandidateId" th:value="*{leaderCandidateId}">
+                        <select name="leaderCandidateId" id="leaderCandidateId" th:field="*{leaderCandidateId}">
                             <option th:each="employee : ${employees}"
                                     th:value="${employee.id}"
                                     th:text="${employee.name}"></option>
@@ -501,12 +501,39 @@ Po otwarciu adresu [http://localhost:8080/project](http://localhost:8080/project
 Na bazie tego samego szablonu, a jedynie dodając nowy punkt dostępu - otwierający pusty formularz - i modyfikując istniejący - służący do zapisu - w klasie *ProjectEditResource* można umożliwić użytkownikowi tworzenie nowych projektów.
 
 ```java
+@RequestMapping("/create")
+public String createProject(Model model) {
+  ProjectEditDO project = new ProjectEditDO();
+  model.addAttribute("project", project);
+  List<LeaderCandidateDO> leaderCandidates = employeeRepo.findLeaderCandidates();
+  model.addAttribute("employees", leaderCandidates);
+  model.addAttribute("activity", "Stwórz projekt");
+  return "project-edit";
+}
 
+@RequestMapping(value = "/save", method = RequestMethod.POST)
+public String saveProject(@ModelAttribute("project") ProjectEditDO projectData) {
+  Project project = Optional.ofNullable(projectData.getId()).map(projectRepo::findOne).orElse(new Project());
+  project.setName(projectData.getName());
+  if (project.getLeader() == null){
+    project.setLeader(createLeader(projectData));
+    project.setEmployees(new ArrayList<>());
+    projectRepo.save(project);
+  } else if (project.getLeader().getEmployee().getId() != projectData.getLeaderCandidateId()) {
+    Leader formerLeader = project.getLeader();
+    project.setLeader(createLeader(projectData));
+    projectRepo.save(project);
+    leaderRepo.delete(formerLeader);
+  } else {
+    projectRepo.save(project);
+  }
+  return "redirect:/project";
+}
 ```
 
+Po naciśnięciu przycisku "Dodaj projekt" można zobaczyć następujący formularz.
 
-
-
+![Widok dodawania projektu](Dodawanie.PNG)
 
 ## Wdrożenie i testowanie aplikacji
 
