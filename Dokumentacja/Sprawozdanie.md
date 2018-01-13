@@ -142,6 +142,10 @@ Prezentacja działania mechanizmu replikacji dostępna jest w formie wideo pod a
 
 ### Funkcje aplikacji - diagram przypadków użycia
 
+Aplikacja realizuje przypadki użycia przedstawione na diagramie. Zostały zaimplementowane jedynie wybrane funkcjonalności, które umożliwiają zaprezentowanie działania mechanizmu replikacji.
+
+![Diagram przypadków użycia](Use Case Diagram.jpg)
+
 ### Realizacja wybranych funkcjonalności
 
 ## Wdrożenie i testowanie aplikacji
@@ -150,6 +154,7 @@ Prezentacja działania mechanizmu replikacji dostępna jest w formie wideo pod a
 
 ## Literatura
 
+- Wrycza S. i in., *Język UML 2.0 w modelowaniu systemów informatycznych*, Helion, Gliwice 2005, s. 33-50
 - https://dev.mysql.com/doc/refman/5.7/en/mysql-cluster-replication-multi-master.html
 - https://docs.spring.io/spring/docs/5.0.1.RELEASE/spring-framework-reference/core.html#spring-core
 - http://docs.spring.io/spring-data/jpa/docs/1.10.4.RELEASE/reference/html/
