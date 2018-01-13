@@ -17,9 +17,10 @@ insert into employee (id, department_id, personal_data_id, salary_id) values (4,
 insert into employee (id, department_id, personal_data_id, salary_id) values (5, 1, 5, 5);
 insert into leader (id, employee_id) values (1,1);
 insert into leader (id, employee_id) values (2,2);
+insert into leader (id, employee_id) values (3,2);
 insert into project (id, name, leader_id) values (1, 'ABC', 1);
 insert into project (id, name, leader_id) values (2, 'TTF', 2);
-insert into project (id, name, leader_id) values (3, 'OaM', 2);
+insert into project (id, name, leader_id) values (3, 'OaM', 3);
 insert into project_employee (project_id, employee_id) values (1,1);
 insert into project_employee (project_id, employee_id) values (1,2);
 insert into project_employee (project_id, employee_id) values (1,3);

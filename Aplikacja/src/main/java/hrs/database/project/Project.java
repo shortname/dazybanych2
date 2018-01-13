@@ -21,7 +21,7 @@ public class Project {
     private String name;
 
     @NotNull
-    @ManyToOne
+    @OneToOne
     @JoinColumn
     private Leader leader;
 

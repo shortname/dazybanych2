@@ -2,6 +2,7 @@ package hrs.database.project;
 
 import hrs.database.employee.Employee;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Leader {
 
     @Id
@@ -17,7 +19,10 @@ public class Leader {
     private Long id;
 
     @NotNull
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private Employee employee;
 
+    public Leader(Employee employee) {
+        this.employee = employee;
+    }
 }

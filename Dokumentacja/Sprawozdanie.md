@@ -304,7 +304,7 @@ Wartością zwracaną metody jest nazwa szablonu strony internetowej, która ma 
 >
 <head>
     <meta charset="utf-8"/>
-    <title>Registration</title>
+    <title>HRS</title>
     <link th:href="@{~/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{~/css/main.css}" rel="stylesheet">
 </head>
@@ -352,9 +352,9 @@ Po otwarciu adresu [http://localhost:8080/project](http://localhost:8080/project
 
 ![Widok listy projektów](Lista.PNG)
 
-####Usuwanie projektów
+#### Usuwanie projektów
 
-Jak można zauważyć w kodzie szablonu naciśnięcie przycisku *Usuń* wywoła wysłanie zapytania typu GET na adres *\<host\>/project?remove=\<id\>*, gdzie *id* zostanie zastąpione odpowiednią wartością. Aby możliwe było odebranie zapytania, należało zdefiniować w klasie *ProjectListResource* kolejny punkt dostępu, reprezentowany metodą *remove*.
+Jak można zauważyć w kodzie szablonu naciśnięcie przycisku *Usuń* wywoła wysłanie zapytania typu GET na adres *\<host\>/project?remove=\<id\>*, gdzie *id* zostanie zastąpione odpowiednią wartością. Aby możliwe było odebranie zapytania, należało zdefiniować w klasie *ProjectListResource* kolejny punkt dostępu, reprezentowany metodą *removeProject*.
 
 ```java
 @RequestMapping("/remove")
@@ -366,9 +366,147 @@ public String removeProject(@RequestParam("id") Long id){
 
 Metoda przyjmuje id jako parametr i usuwa z bazy odpowiedni rekord z pomocą metody *delete* zdefiniowanej w klasie *ProjectRepo* przez interfejs *JpaRepository* pochodzący z biblioteki Spring Data JPA. Nie trzeba więc tworzyć zapytania samodzielnie. Po wykonaniu usuwania aplikacja przekierowuje na adres *\<host\>/project*, gdzie użytkownik może zobaczyć zaktualizowaną listę projektów.
 
-####Edytowanie danych projektu
+#### Edytowanie danych projektu
 
 Aby możliwe było edytowanie danych projektu należało stworzyć nowy szablon definiujący odpowiedni formularz.
+
+```html
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="utf-8"/>
+    <title>HRS</title>
+    <link th:href="@{~/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{~/css/main.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 th:text="${activity}"></h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form action="save" method="POST" id="edit-form" th:object="${project}">
+                <input type="hidden" name="id" th:value="*{id}">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="name">Nazwa*:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="name" name="name" th:value="*{name}"
+                               required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="leaderCandidateId">Kierownik*:</label>
+                    <div class="col-sm-10">
+                        <select name="leaderCandidateId" id="leaderCandidateId" th:value="*{leaderCandidateId}">
+                            <option th:each="employee : ${employees}"
+                                    th:value="${employee.id}"
+                                    th:text="${employee.name}"></option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Zapisz</button>
+                <a href="/project" class="btn btn-warning" role="button">Anuluj</a>
+        </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{~/jquery/jquery-3.2.1.min.js}"></script>
+<script th:src="@{~/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{~/js/person-edit.js}"></script>
+</div>
+</body>
+</html>
+```
+
+Szablon zawiera formularz składający się z pola tekstowego zawierającego nazwę projektu oraz listy rozwijanej pozwalającej na wybór pracownika mającego zostać liderem. Do obsługi stworzonego szablonu w klasie *ProjectEditResource* zdefiniowano dwa nowe punkty dostępu:
+
+- do odczytu danych edytowanego projektu - GET *\<host\>/project/edit?id=\<id\>*
+- do zapisu zmian - POST *\<host\>/project/save*
+
+```java
+package hrs.rest.employee;
+
+import hrs.database.employee.Employee;
+import hrs.database.employee.LeaderCandidateDO;
+import hrs.database.employee.EmployeeRepo;
+import hrs.database.project.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/project")
+public class ProjectEditController {
+
+    @Autowired
+    private ProjectRepo projectRepo;
+
+    @Autowired
+    private EmployeeRepo employeeRepo;
+
+    @Autowired
+    private LeaderRepo leaderRepo;
+
+    @RequestMapping("/edit")
+    public String openProject(@RequestParam("id") Long id, Model model){
+        ProjectEditDO project = new ProjectEditDO(projectRepo.findOne(id));
+        model.addAttribute("project", project);
+        List<LeaderCandidateDO> leaderCandidates = employeeRepo.findLeaderCandidates();
+        model.addAttribute("employees", leaderCandidates);
+        model.addAttribute("activity", "Edytuj projekt");
+        return "project-edit";
+    }
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String saveProject(@ModelAttribute("project") ProjectEditDO projectData) {
+        Project project = projectRepo.findOne(projectData.getId());
+        project.setName(projectData.getName());
+        if (project.getLeader().getEmployee().getId() != projectData.getLeaderCandidateId()) {
+            Leader formerLeader = project.getLeader();
+            project.setLeader(createLeader(projectData));
+            projectRepo.save(project);
+            leaderRepo.delete(formerLeader);
+        } else {
+            projectRepo.save(project);
+        }
+        return "redirect:/project";
+    }
+
+    private Leader createLeader(@ModelAttribute("project") ProjectEditDO projectData) {
+        Employee chosenLeader = employeeRepo.findOne(projectData.getLeaderCandidateId());
+        return leaderRepo.save(new Leader(chosenLeader));
+    }
+
+}
+```
+
+W przypadku odczytu danych oprócz danych samego projektu pobierana jest lista pracowników - potencjalnych liderów - służąca wypełnieniu listy rozwijanej. Zapis polega natomiast na uzupełnieniu odpowiednich atrybutów encji - a także, jeśli to konieczne, stworzeniu rekordu nowego lidera i usunięciu starego. Ponownie operacje te są realizowane za pomocą gotowych mechanizmów biblioteki Spring Data JPA.
+
+Po otwarciu adresu [http://localhost:8080/project](http://localhost:8080/project) i naciśnięciu "Edytuj" przy pierwszym projekcie, można edytować jego dane.
+
+![Widok edycji](Edycja.PNG)
+
+#### Dodawanie projektu
+
+Na bazie tego samego szablonu, a jedynie dodając nowy punkt dostępu - otwierający pusty formularz - i modyfikując istniejący - służący do zapisu - w klasie *ProjectEditResource* można umożliwić użytkownikowi tworzenie nowych projektów.
+
+```java
+
+```
+
+
+
+
 
 ## Wdrożenie i testowanie aplikacji
 
