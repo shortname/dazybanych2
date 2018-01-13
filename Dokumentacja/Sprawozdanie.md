@@ -22,15 +22,15 @@ Aplikacja wykorzystuje relacyjną bazę danych MySQL oraz logikę biznesową zai
 
 ### Model konceptualny
 
-![Model konceptualny](Conceptual ERD.jpg)
+![Model konceptualny](ConceptualERD.jpg)
 
 ### Model logiczny
 
-![Model logiczny](Logical ERD.jpg)
+![Model logiczny](LogicalERD.jpg)
 
 ### Model fizyczny
 
-![Model fizyczny](Physical ERD.jpg)
+![Model fizyczny](PhysicalERD.jpg)
 
 ## Implementacja baz danych w środowisku MySQL
 
