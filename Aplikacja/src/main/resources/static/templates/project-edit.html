@@ -16,7 +16,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form action="save" method="POST" id="edit-form" th:object="${project}">
+            <form action="/project/save" method="POST" id="edit-form" th:object="${project}">
                 <input type="hidden" name="id" th:value="*{id}">
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="name">Nazwa*:</label>

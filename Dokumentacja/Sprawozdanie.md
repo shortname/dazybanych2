@@ -102,7 +102,7 @@ Kolejnym krokiem było konfiguracja maszyn wirtualnych w celu umożliwienia repl
 
     # Host specific replication configuration
     server_id = [id serwera]
-    bind-address = [ip serwera]
+    bind-address = 127.0.0.1
     report_host = [ip serwera]
     loose-group_replication_local_address = [ip serwera]:33061
     ```
@@ -151,7 +151,7 @@ Prezentacja działania mechanizmu replikacji dostępna jest w formie wideo pod a
 Schemat bazy danych jest tworzony przez mechanizm HBM2DDL biblioteki Hibernate na podstawie klas encji aplikacji klienckiej. Aby było to możliwe należało skonfigurować aplikację z użyciem pliku application.properties.
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/hrs
+spring.datasource.url= jdbc:mysql://127.0.0.1:3306/hrs
 spring.datasource.username=root
 spring.datasource.password=admin
 spring.datasource.driverClassName=com.mysql.jdbc.Driver
@@ -312,7 +312,7 @@ Wartością zwracaną metody jest nazwa szablonu strony internetowej, która ma 
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <a href="project/create" class="btn btn-success" role="button">Dodaj projekt</a>
+            <a href="/project/create" class="btn btn-success" role="button">Dodaj projekt</a>
         </div>
     </div>
     <div class="row">
@@ -331,10 +331,10 @@ Wartością zwracaną metody jest nazwa szablonu strony internetowej, która ma 
                     <td th:text="${project.leader}"></td>
                     <td th:text="${project.size}"></td>
                     <td>
-                        <a th:href="'project/edit?id=' + ${project.id}" class="btn btn-info" role="button">Edytuj</a>
+                        <a th:href="'/project/edit?id=' + ${project.id}" class="btn btn-info" role="button">Edytuj</a>
                     </td>
                     <td>
-                        <a th:href="'project/remove?id=' + ${project.id}" class="btn btn-danger" role="button">Usuń</a>
+                        <a th:href="'/project/remove?id=' + ${project.id}" class="btn btn-danger" role="button">Usuń</a>
                     </td>
                 </tr>
                 </tbody>
@@ -389,7 +389,7 @@ Aby możliwe było edytowanie danych projektu należało stworzyć nowy szablon 
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form action="save" method="POST" id="edit-form" th:object="${project}">
+            <form action="/project/save" method="POST" id="edit-form" th:object="${project}">
                 <input type="hidden" name="id" th:value="*{id}">
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="name">Nazwa*:</label>
