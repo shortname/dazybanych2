@@ -537,6 +537,16 @@ Po naciśnięciu przycisku "Dodaj projekt" można zobaczyć następujący formul
 
 ## Wdrożenie i testowanie aplikacji
 
+Rozpoczęcie pracy testowania naszego systemu polega na połączeniu minimum dwóch maszyn wirtualnych. Donaszego testowania użyliśmy trzech maszyn wirtualnych uruchomionych na „vmwareworkstation player”. Następnie na każdej maszynie zainstalowaliśmy systemubuntu oraz najnowszą wersję MySQL. Kolejnym krokiem jest konfiguracja naszychbaz danych polegające na wprowadzeniu zewnętrznych ip maszyn wirtualnych orazuruchomienie replikacji. Działanie takie umożliwi nam replikacje pomiędzy naszymibazami danych. Ostatnim krokiem zostaje zainstalowanie naszej aplikacji nakażdej maszynie. Pierwsze uruchomienie naszej aplikacji na jednej z maszyn,spowoduje stworzenie naszej bazy oraz dodanie rekordów. Dzięki uruchomionej replikacjidane zostaną wysłane na inne bazy danych.
+
+Testowanie naszego systemu polega na przetestowaniu trzechakcji: dodawania, usuwanie oraz edycji naszego rekordu z bazy danych. Wmomencie dodawania nowego rekordu na jednych z aplikacji, możemy zauważyć, żepo odświeżeniu aplikacji na innych maszynach spowoduje pojawienie się nowego rekordu.Niezależnie na której aplikacji dodamy nowy rekord zostanie on również dodanydo replikowanych baz danych. Podobne zachowanie możemy zauważyć w momencieusuwania lub edycji rekordu. Niezależnie na której aplikacji usuniemy lub zedytujemy nasz rekordu, po odświeżeniu naszych aplikacji zobaczymy usunięty lubz edytowany rekord w naszych aplikacjach. W podanych źródłach możemy zauważyćdziałanie naszej replikacji w aplikacji webowej.
+
+·        źródło: <https://www.youtube.com/watch?v=RNjxY1Gp_18&feature=youtu.be>
+
+·        źródło: https://www.youtube.com/watch?v=knksTXE6U4A&feature=youtu.be
+
+·        źródło: https://www.youtube.com/watch?v=dE7Ef1QGg0o&feature=youtu.be
+
 ## Podsumowanie
 
 ## Literatura
